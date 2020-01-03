@@ -1,9 +1,10 @@
 import { eventSignOut } from '../controllers/login-controller.js';
 import { getUser } from '../controllers/profile-controller.js';
 import { createPost, showPublication } from '../controllers/post-controller.js';
+import { postView } from './posts.js';
 
 
-export default () => {
+export default (posts, user) => {
   const viewProfile = `
         <header>
             <nav>
@@ -13,7 +14,7 @@ export default () => {
         </header>
         <div class="body">
             <div class="profile-section">
-                <img class="cover-page" src="/img/fondo.jpg" alt="portada">
+                <img class="cover-page" src="../src/img/fondo.jpg" alt="portada">
                 <div class="info-user">
                     <img id="photo" class="avatar" src="" alt="avatar" >
                     <div>
@@ -51,10 +52,12 @@ export default () => {
   file.addEventListener('change', () => {
     divElement.querySelector('#input-value').innerHTML = file.value.replace(/([^\\]*\\)*/, '');
   });
-
+  const allPublications = divElement.querySelector('#all-publications');
+  posts.forEach((element) => {
+    allPublications.appendChild(postView(element));
+  });
   divElement.querySelector('#btn-close').addEventListener('click', eventSignOut);
   getUser();
   divElement.querySelector('#btn-post').addEventListener('click', createPost);
-  showPublication();
   return divElement;
 };

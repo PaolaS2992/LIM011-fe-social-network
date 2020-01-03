@@ -1,7 +1,7 @@
-// eslint-disable-next-line import/no-cycle
+
 import {
   deletePublication, updatePublication, saveLikePublication,
-  createComments, showCommentPublication, showLikePublication,
+  createComments, showLikePublication,
 } from '../controllers/post-controller.js';
 import { userActive } from '../controllers/profile-controller.js';
 
@@ -12,16 +12,16 @@ export const postView = (publication) => {
     <div class="div-post">
         <div class="post-header">
             <p>Publicado por 
-              <span> ${publication.data().name_user}</span>
+              <span> ${publication.name_user}</span>
             </p>
-            <select name="status" id="post-status" disabled>
+            <select name="status" id="post-status-${publication.id}" disabled>
               <option value="publico">Público</option>
               <option value="privado">Privado</option>
             </select>
-            <span class="btn-delete" id="btn-delete">&times;</span>
+            <span class="btn-delete" id="btn-delete-${publication.id}">&times;</span>
         </div>
         <div class="post-body">
-            <div id="post-message" contenteditable="false">${publication.data().message}</div>
+            <div id="post-message" contenteditable="false">${publication.message}</div>
         </div>
         <div class="post-footer">
           <div class ="section-likes">
@@ -29,32 +29,30 @@ export const postView = (publication) => {
             <img id="btn-nonlike-${publication.id}" class="icons hide" src="https://img.icons8.com/flat_round/64/000000/hearts.png">
             &nbsp; &nbsp; <p class="count-likes" id="count-likes-${publication.id}"> </p>   
           </div>    
-            <img id="btn-commentView" class="icons" src="https://img.icons8.com/doodle/48/000000/filled-topic.png">
-            <img id="btn-edit" class="icons" src="https://img.icons8.com/flat_round/64/000000/edit-file.png">
-            <img id="btn-save" class="icons hide" src="https://img.icons8.com/cute-clipart/64/000000/save-close.png">
+            <img id="btn-commentView-${publication.id}" class="icons" src="https://img.icons8.com/doodle/48/000000/filled-topic.png">
+            <img id="btn-edit-${publication.id}" class="icons" src="https://img.icons8.com/flat_round/64/000000/edit-file.png">
+            <img id="btn-save-${publication.id}" class="icons hide" src="https://img.icons8.com/cute-clipart/64/000000/save-close.png">
         </div>
         <div id ="comments-section" class="comments-section hide">
           <form class ="form-comment">
             <textarea class="comment-post" id="comment-post" cols="30" rows="2" placeholder="Escribe un comentario"></textarea>
-            <img id="btn-comment" class="icons" src="https://img.icons8.com/color/96/000000/telegram-app.png">
+            <img id="btn-comment-${publication.id}" class="icons" src="https://img.icons8.com/color/96/000000/telegram-app.png">
           </form> 
           <div class="" id="${publication.id}">   
           </div>
         </div>
     </div>
     `;
-  const allPublications = document.querySelector('#all-publications');
   divElement.innerHTML = postInfo;
-  allPublications.appendChild(divElement);
 
-  const btnDelete = divElement.querySelector('#btn-delete');
+  const btnDelete = divElement.querySelector(`#btn-delete-${publication.id}`);
   btnDelete.addEventListener('click', () => {
     deletePublication(publication.id);
   });
-  const btnEdit = divElement.querySelector('#btn-edit');
-  const btnSave = divElement.querySelector('#btn-save');
-  const postMesage = divElement.querySelector('#post-message');
-  const postStatus = divElement.querySelector('#post-status');
+  const btnEdit = divElement.querySelector(`#btn-edit-${publication.id}`);
+  const btnSave = divElement.querySelector(`#btn-save-${publication.id}`);
+  const postMesage = divElement.querySelector(`#post-message-${publication.id}`);
+  const postStatus = divElement.querySelector(`#post-status-${publication.id}`);
   // console.log(postStatus.disabled);
 
   btnEdit.addEventListener('click', () => {
@@ -81,13 +79,13 @@ export const postView = (publication) => {
     console.log('adios');
   });
 
-  if (publication.data().id_user !== userActive().uid) {
+  if (publication.id_user !== userActive().uid) {
     btnDelete.classList.add('hide');
     btnEdit.classList.add('hide');
   }
   // console.log(postStatus.value);
   // console.log(postStatus.options[0]);
-  if (publication.data().status === 'publico') {
+  if (publication.status === 'publico') {
     postStatus.options[0].selected = true;
   } else {
     postStatus.options[1].selected = true;
@@ -104,15 +102,15 @@ export const postView = (publication) => {
   });
   showLikePublication(publication.id);
 
-  const btnCommentView = divElement.querySelector('#btn-commentView');
-  const commentSection = divElement.querySelector('#comments-section');
+  const btnCommentView = divElement.querySelector(`#btn-commentView-${publication.id}`);
+  const commentSection = divElement.querySelector(`#comments-section-${publication.id}`);
   btnCommentView.addEventListener('click', () => {
     commentSection.classList.toggle('hide');
-    showCommentPublication(publication.id);
+    //showCommentPublication(publication.id);
   });
-  const btnComment = divElement.querySelector('#btn-comment');
+  const btnComment = divElement.querySelector(`#btn-comment-${publication.id}`);
   btnComment.addEventListener('click', () => {
-    const comment = divElement.querySelector('#comment-post').value;
+    const comment = divElement.querySelector(`#comment-post-${publication.id}`).value;
     console.log(comment);
     const user = userActive();
     const obj = {
@@ -121,8 +119,8 @@ export const postView = (publication) => {
       name_user: user.displayName,
     };
     createComments(publication.id, obj);
-    divElement.querySelector('#comment-post').value = '';
-    showCommentPublication(publication.id);
+    divElement.querySelector(`#comment-post-${publication.id}`).value = '';
+    //showCommentPublication(publication.id);
   });
   return divElement;
 };

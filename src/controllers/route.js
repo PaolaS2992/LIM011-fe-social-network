@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 
 import components from '../views/components.js';
+import { showPost } from '../models/model-firebase.js';
 
 const changeView = (route) => {
   const container = document.querySelector('#container');
@@ -15,7 +16,9 @@ const changeView = (route) => {
       return container.appendChild(components.register());
     }
     case '#/profile': {
-      return container.appendChild(components.profile());
+      showPost((arrDeData) => {
+        container.appendChild(components.profile(arrDeData));
+      });
     }
     default:
       break;

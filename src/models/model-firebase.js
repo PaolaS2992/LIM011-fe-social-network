@@ -29,7 +29,15 @@ export const getNote = (note) => firebase.firestore().collection(note).get();
 export const addPost = (nameCollection, obj) => (
   firebase.firestore().collection(nameCollection).add(obj)
 );
-export const showPost = () => firebase.firestore().collection('post');
+export const showPost = (callback) => firebase.firestore().collection('post').onSnapshot((querySnapshot) => {
+/*   document.querySelector('#all-publications').innerHTML = ''; */
+  const data = [];
+  querySnapshot.forEach((doc) => {
+    data.push({ id: doc.id, ...doc.data() });
+  });
+  callback(data);
+});
+
 export const deletePost = (ide) => firebase.firestore().collection('post').doc(ide).delete();
 export const updatePost = (ide, obj) => firebase.firestore().collection('post').doc(ide).update(obj);
 

@@ -3,9 +3,6 @@ import {
   addPost, deletePost, updatePost, showPost, saveLikes, showLikes, addComments, showComments,
 } from '../models/model-firebase.js';
 import { userActive } from './profile-controller.js';
-// eslint-disable-next-line import/no-cycle
-import { postView } from '../views/posts.js';
-import { commentView } from '../views/comments.js';
 
 export const datePublication = (datePost) => {
   const yearPost = datePost.getFullYear();
@@ -61,13 +58,7 @@ export const updatePublication = (ide, obj) => {
 };
 
 export const showPublication = () => {
-  showPost()
-    .onSnapshot((querySnapshot) => {
-      document.querySelector('#all-publications').innerHTML = '';
-      querySnapshot.forEach((doc) => {
-        postView(doc);
-      });
-    });
+  showPost();
 };
 
 export const saveLikePublication = (idPost, obj, ide) => {
@@ -112,7 +103,7 @@ export const showCommentPublication = (idPost) => {
     .then((querySnapshot) => {
       document.querySelector(`#${idPost}`).innerHTML = '';
       querySnapshot.forEach((doc) => {
-        commentView(doc);
+        //  commentView(doc);
       });
     });
 };
