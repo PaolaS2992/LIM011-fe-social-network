@@ -1,13 +1,10 @@
-/* eslint-disable no-console */
 import {
-  signIn, googleSignIn, facebookSignIng, signOut, addNote,
-} from '../models/model-firebase.js';
-// import { getUser } from './profile-controller.js';
+  signIn, googleSignIn, facebookSignIn, setDocument,
+} from '../model/firebase-model.js';
 
-export const signInUser = (event) => {
-  event.preventDefault(); // para detener al action del form (submit)
-
-  const btnLogin = event.target;
+export const eventSignIn = (e) => {
+  e.preventDefault();
+  const btnLogin = e.target;
   const email = btnLogin.closest('div').querySelector('[type=email]').value;
   const password = btnLogin.closest('div').querySelector('[type=password]').value;
   const message = btnLogin.closest('div').querySelector('p');
@@ -17,15 +14,11 @@ export const signInUser = (event) => {
         message.innerHTML = 'VALIDAR CUENTA - REVISA TU CORREO';
       } else {
         window.location.hash = '#/profile';
-        // getUser();
       }
+      console.log(newUser);
     })
     .catch((error) => {
-      // Handle Errors here.
       const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorMessage);
-      console.log(errorCode);
       switch (errorCode) {
         case 'auth/wrong-password':
           message.innerHTML = 'La contraseña es invalida o el usuario no tiene una contraseña';
@@ -42,7 +35,9 @@ export const signInUser = (event) => {
     });
 };
 
-export const eventGoogleSignIn = () => {
+export const eventGoogleSignIn = (e) => {
+  const btnGoogle = e.target;
+  const message = btnGoogle.closest('div').querySelector('p');
   googleSignIn()
     .then((result) => {
       const user = result.user;
@@ -51,48 +46,40 @@ export const eventGoogleSignIn = () => {
         email: user.email,
         photoURL: user.photoURL,
       };
-      addNote('user', user.uid, obj)
+      console.log(obj);
+      setDocument('user', user.uid, obj)
         .then(() => {
           window.location.hash = '#/profile';
-        });
-    }).catch((error) => {
+        })
+        .catch((error) => console.log(error));
+    })
+    .catch((error) => {
       const errorMessage = error.message;
-      console.log('errorMessage: ', errorMessage);
+      message.innerHTML = errorMessage;
     });
 };
 
-export const eventFacebookSignIn = (event) => {
-  const btnRegister = event.target;
-  const message = btnRegister.closest('div').querySelector('p');
-  facebookSignIng()
+export const eventFacebookSignIn = (e) => {
+  const btnFacebook = e.target;
+  const message = btnFacebook.closest('div').querySelector('p');
+  facebookSignIn()
     .then((result) => {
-      // The signed-in user info.
       const user = result.user;
       const obj = {
         name: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
       };
-      window.location.hash = '#/profile';
-      addNote('user', user.uid, obj)
+      setDocument('user', user.uid, obj)
         .then(() => {
           window.location.hash = '#/profile';
-        });
-    }).catch((error) => {
+        })
+        .catch((error) => console.log(error));
+    })
+    .catch((error) => {
       const errorCode = error.code;
       if (errorCode === 'auth/account-exists-with-different-credential') {
         message.innerHTML = 'La dirección de correo electrónico ya esta en uso';
       }
-      console.log('error: ', error);
-    });
-};
-
-export const eventSignOut = () => {
-  signOut()
-    .then(() => {
-      window.location.hash = '#/';
-    }).catch((error) => {
-    // An error happened.oto
-      console.log(error);
     });
 };

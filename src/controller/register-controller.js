@@ -1,13 +1,13 @@
-import { createAuth, verificationEmail, addNote } from '../models/model-firebase.js';
+import { createUser, verificationEmail, setDocument } from '../model/firebase-model.js';
 
-const createUser = (event) => {
-  const btnRegister = event.target;
+const eventCreateUser = (e) => {
+  const btnRegister = e.target;
   const nameUser = btnRegister.closest('div').querySelector('[type = text]').value;
   const email = btnRegister.closest('div').querySelector('[type = email]').value;
   const password = btnRegister.closest('div').querySelector('[type = password]').value;
   const message = btnRegister.closest('div').querySelector('p');
-  if (email !== '' || password !== '') {
-    createAuth(email, password)
+  if (email !== '' || password !== '' || nameUser !== '') {
+    createUser(email, password)
       .then((newUser) => {
         verificationEmail();
         const obj = {
@@ -15,14 +15,14 @@ const createUser = (event) => {
           email: newUser.user.email,
           photoURL: 'https://img.icons8.com/ios-glyphs/120/000000/user-female.png',
         };
-        addNote('user', newUser.user.uid, obj);
-        window.location.hash = '#/';
+        setDocument('user', newUser.user.uid, obj)
+          .then(() => {
+            window.location.hash = '#/';
+          })
+          .catch((error) => console.log(error));
       })
       .catch((error) => {
-      // Handle Errors here.
         const errorCode = error.code;
-        // const errorMessage = error.message;
-        // console.log(errorMessage);
         switch (errorCode) {
           case 'auth/invalid-email':
             message.innerHTML = 'La dirección de correo electrónico no es valida';
@@ -42,4 +42,4 @@ const createUser = (event) => {
   }
 };
 
-export default createUser;
+export default eventCreateUser;
