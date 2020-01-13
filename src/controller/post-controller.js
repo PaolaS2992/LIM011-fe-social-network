@@ -1,5 +1,6 @@
 import {
   deleteDocument, updateDocument, addSubCollection, showComment,
+  getDocument, addEleArray, deleteEleArray, user,
 } from '../model/firebase-model.js';
 
 export const eventDeletePost = (idPost) => {
@@ -25,6 +26,34 @@ export const eventAddComment = (idPost, obj) => {
 
 export const eventShowComment = (idPost, callback) => {
   showComment(idPost, callback);
+};
+
+export const eventCountLike = (idPost) => {
+  getDocument('post', idPost)
+    .then((doc) => {
+      if (doc.exists) {
+        /* console.log('datos de la publicaion: ', doc.data());
+        console.log(idPost); */
+        const arraylikeEmail = doc.data().likeEmail;
+        // console.log(arraylikeEmail.length);
+        if (arraylikeEmail.length === 0) {
+          addEleArray('post', idPost, user().email);
+          console.log('Se agrego');
+        } else {
+          arraylikeEmail.forEach((ele) => {
+            if (ele !== user().email) {
+              addEleArray('post', idPost, user().email);
+              console.log('Se agrego');
+            } else {
+              deleteEleArray('post', idPost, user().email);
+              console.log('Se borro');
+            }
+          });
+        }
+      } else {
+        console.log('Documento no Existe');
+      }
+    });
 };
 
 /* NO UTILIZADO */

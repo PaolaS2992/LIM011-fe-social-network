@@ -1,5 +1,5 @@
 import {
-  eventDeletePost, eventUpdatePost, eventAddComment, eventShowComment,
+  eventDeletePost, eventUpdatePost, eventAddComment, eventShowComment, eventCountLike,
 } from '../controller/post-controller.js';
 import { user } from '../model/firebase-model.js';
 import commentView from './comments-view.js';
@@ -22,9 +22,9 @@ const postView = (publication) => {
     </div>
     <div class="post-footer">
         <div class ="section-likes">
-        <img id="btn-like-${publication.id}" class="icons" src="https://img.icons8.com/flat_round/64/000000/hearts.png">
+        <img id="btn-like-${publication.id}" class="icons" src="//img.icons8.com/cotton/64/000000/like--v3.png">
         <img id="btn-nonlike-${publication.id}" class="icons hide" src="https://img.icons8.com/flat_round/64/000000/hearts.png">
-        &nbsp; &nbsp; <p class="count-likes" id="count-likes-${publication.id}"> </p>   
+        &nbsp; &nbsp; <p class="count-likes" id="count-likes-${publication.id}"></p>   
         </div>    
         <img id="btn-commentView-${publication.id}" class="icons" src="https://img.icons8.com/doodle/48/000000/filled-topic.png">
         <img id="btn-edit-${publication.id}" class="icons" src="https://img.icons8.com/flat_round/64/000000/edit-file.png">
@@ -104,9 +104,30 @@ const postView = (publication) => {
     eventAddComment(publication.id, obj);
     divElement.querySelector('#comment-post').value = '';
   });
-  // Obtener la data en tiempo real.
+  // Like / DisLike
+  const btnLike = divElement.querySelector(`#btn-like-${publication.id}`);
+  btnLike.addEventListener('click', () => {
+    eventCountLike(publication.id);
+  });
+  const btnDisLike = divElement.querySelector(`#btn-nonlike-${publication.id}`);
+  btnDisLike.addEventListener('click', () => {
+    eventCountLike(publication.id);
+  });
+  const allLikes = publication.likeEmail; // Cambio de icono de Like y DisLike.
+  if (allLikes.length !== 0) {
+    allLikes.forEach((like) => {
+      if (like === user().email) {
+        btnLike.classList.add('hide');
+        btnDisLike.classList.remove('hide');
+      }
+    });
+  }
+  const countLike = divElement.querySelector(`#count-likes-${publication.id}`); // Contador de Likes (realizarlo desde aqui permite el cambio rapido).
+  countLike.innerHTML = publication.likeEmail.length;
+
+  // Obtener COMENTARIOS a tiempo real.
   eventShowComment(publication.id, (arrComment) => {
-    const divComments = document.querySelector(`#${publication.id}`);
+    const divComments = divElement.querySelector(`#${publication.id}`);
     divComments.innerHTML = '';
     arrComment.forEach((comment) => {
       // console.log(comment);

@@ -8,8 +8,10 @@ const fixtureData = {
   __collection__: {
     post: {
       __doc__: {
-        abc123: {
+        abc122: {
+          idUser: 'def123',
           message: 'Primer post de prueba',
+          likeEmail: ['email-uno@gmail.com'],
           __collection__: {
             comments: {
               __doc__: {
@@ -20,31 +22,49 @@ const fixtureData = {
             },
           },
         },
-        abc124: {
+        abc123: {
+          idUser: 'def123',
           message: 'Segundo post de prueba',
+          likeEmail: [],
+          __collection__: {
+            comments: {
+              __doc__: {
+                ghi123: {
+                  message: 'Comentario 2',
+                },
+              },
+            },
+          },
+        },
+        abc124: {
+          idUser: 'def124',
+          message: 'Tercer post de prueba',
+          likeEmail: ['email-tres@gmail.com'],
           __collection__: {
             comments: {
               __doc__: {
                 ghi124: {
-                  message: 'Comentario 2',
+                  message: 'Comentario 3',
                 },
                 ghi127: {
-                  message: 'Comentario 5',
+                  message: 'Comentario 4',
                 },
                 ghi128: {
-                  message: 'Comentario 7',
+                  message: 'Comentario 5',
                 },
               },
             },
           },
         },
         abc125: {
-          message: 'Tercero post de prueba',
+          idUser: 'def125',
+          message: 'Cuarto post de prueba',
+          likeEmail: ['email-cuatro@gmail.com'],
           __collection__: {
             comments: {
               __doc__: {
                 ghi125: {
-                  message: 'Comentario 3',
+                  message: 'Comentario 7',
                 },
               },
             },
@@ -75,6 +95,7 @@ const fixtureData = {
 };
 
 const objPost = {
+  idUser: 'def123',
   message: 'Laboratoria',
 };
 const objPostUpdate = {
@@ -88,21 +109,21 @@ const objUser = {
 };
 
 global.firebase = new MockFirebase(fixtureData, { isNaiveSnapshotListenerEnabled: true });
-/*
+
 describe('showPost', () => {
   it('debería mostrar los post la data en tiempo real', (done) => {
     const callback = (post) => {
       console.log(post);
       done();
     };
-    showPost(callback);
+    showPost('idUser', '==', 'def123', callback);
   });
-}); */
+});
 
 describe('addDocument', () => {
   it('Agregar Post', (done) => addDocument('post', objPost)
     .then(() => showPost(
-      (data) => {
+      'idUser', '==', 'def123', (data) => {
         console.log(data);
         const result = data.find((post) => post.message === 'Laboratoria');
         expect(result.message).toBe('Laboratoria');
@@ -120,6 +141,12 @@ describe('setDocument', () => {
     }));
 });
 
+// eslint-disable-next-line jest/no-focused-tests
+/* describe.only('addEleArray', () => {
+  it('Agregar Email Array', (done) => addEleArray('post', 'abc122', 'laboratoria-Lima@gmail.com'));
+  expect();
+}); */
+
 /**
  * IMPORTANTE: only
  * Propiedad: only, significa "solamente" esta propiedad nos permite
@@ -127,10 +154,11 @@ describe('setDocument', () => {
  * Ejemplo:
  * describe.only('deleteDocument', () => { ....
  */
+
 describe('deleteDocument', () => {
   it('Eliminat Post', (done) => deleteDocument('abc125')
     .then(() => showPost(
-      (collection) => {
+      'idUser', '==', 'def125', (collection) => {
         console.log(collection);
         const result = collection.find((post) => post.id === 'abc125');
         console.log(result);
@@ -143,7 +171,7 @@ describe('deleteDocument', () => {
 describe('updateDocument', () => {
   it('Actualizar Post', (done) => updateDocument('abc123', objPostUpdate)
     .then(() => showPost(
-      (collection) => {
+      'idUser', '==', 'def123', (collection) => {
         console.log(collection);
         const result = collection.find((post) => post.message === 'Laboratoria 2020');
         expect(result.message).toBe('Laboratoria 2020');
@@ -214,12 +242,45 @@ const fixtureData = {
       __doc__: {
         abc123: {
           message: 'Primer post de prueba',
+          __collection__: {
+            comments: {
+              __doc__: {
+                ghi123: {
+                  message: 'Comentario 1',
+                },
+              },
+            },
+          },
         },
         abc124: {
           message: 'Segundo post de prueba',
+          __collection__: {
+            comments: {
+              __doc__: {
+                ghi124: {
+                  message: 'Comentario 2',
+                },
+                ghi127: {
+                  message: 'Comentario 5',
+                },
+                ghi128: {
+                  message: 'Comentario 7',
+                },
+              },
+            },
+          },
         },
         abc125: {
           message: 'Tercero post de prueba',
+          __collection__: {
+            comments: {
+              __doc__: {
+                ghi125: {
+                  message: 'Comentario 3',
+                },
+              },
+            },
+          },
         },
       },
     },

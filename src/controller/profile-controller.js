@@ -12,14 +12,14 @@ export const eventObsAuth = () => {
   });
 };
 
-/* const datePost = (date) => {
+const datePost = (date) => {
   const yearPost = date.getFullYear();
   const monthPost = date.getMonth() + 1;
   const dayPost = date.getDate();
   const hourPost = date.toLocaleTimeString();
   const completeDate = `${dayPost}/${monthPost}/${yearPost} a las ${hourPost}`;
   return completeDate;
-}; */
+};
 
 export const eventAddPost = (e) => {
   e.preventDefault();
@@ -27,14 +27,13 @@ export const eventAddPost = (e) => {
   const statusPost = document.querySelector('#status-post').value;
   const date = new Date();
   const userActual = user(); // OBS: Existira alguna forma de utilizar el obsAuth().
-  const like = [];
   const obj = {
     message: post,
     id_user: userActual.uid,
     name_user: userActual.displayName,
-    date_post: date.toLocaleString('pt-PT'),
+    date_post: datePost(date),
     status: statusPost,
-    likeEmail: like,
+    likeEmail: [],
   };
   addDocument('post', obj)
     .then((docRef) => {

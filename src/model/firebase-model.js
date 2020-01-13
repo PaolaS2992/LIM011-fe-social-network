@@ -63,9 +63,9 @@ export const deleteDocument = (idDocu) => firebase.firestore().collection('post'
 export const updateDocument = (idDocu, obj) => firebase.firestore().collection('post').doc(idDocu).update(obj);
 
 // 5. Leer los datos en Real Time.*
-export const showPost = (callback) => (firebase.firestore().collection('post')
-  // .where('id_user', '==', id)
-  .orderBy('date_post', 'asc')
+export const showPost = (nomColum, operator, condition, callback) => (firebase.firestore().collection('post')
+  .where(nomColum, operator, condition)
+  .orderBy('date_post', 'desc')
   .onSnapshot((querySnapshot) => {
     const dataPost = [];
     querySnapshot.forEach((doc) => {
@@ -104,9 +104,21 @@ export const showComment = (idPost, callback) => (
     })
 );
 
-/* NO UTILIZADOS */
-// Leer los datos del Usuario.
-// export const getDocument = (collec) => firebase.firestore().collection(collec).get();
+/* LIKES */
+// Obtener informacion del DOCUMENTO del post.
+export const getDocument = (collec, doc) => firebase.firestore().collection(collec).doc(doc).get();
+
+// Agregar un elemento de un array.
+export const addEleArray = (collec, idDoc, emailUser) => (
+  firebase.firestore().collection(collec).doc(idDoc)
+    .update({ likeEmail: firebase.firestore.FieldValue.arrayUnion(emailUser) })
+);
+// Eliminar un elemento de un array.
+export const deleteEleArray = (collec, idDoc, emailUser) => (
+  firebase.firestore().collection(collec).doc(idDoc)
+    .update({ likeEmail: firebase.firestore.FieldValue.arrayRemove(emailUser) })
+);
+
 
 // SUB-COLECCIONES:: Mostrar comentario.
 /* export const getSubCollection = (idDocu) => firebase.firestore().collection('post').doc(idDocu)

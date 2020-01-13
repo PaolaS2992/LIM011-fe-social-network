@@ -46,7 +46,7 @@ export const eventGoogleSignIn = (e) => {
         email: user.email,
         photoURL: user.photoURL,
       };
-      console.log(obj);
+      // console.log(obj);
       setDocument('user', user.uid, obj)
         .then(() => {
           window.location.hash = '#/profile';
